@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Симулятор решения — фейкдор Shadow Fight</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #07080a;
+        --panel: #14161c;
+        --line: #262a34;
+        --txt: #f3f4f7;
+        --muted: #9aa0ac;
+        --red: #ff2e2e;
+        --red2: #c91313;
+        --gold: #f5b53f;
+        --green: #37d67a;
+        --amber: #f5a623;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--txt);
+        font-family: "Inter", system-ui, sans-serif;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 48px 22px 80px;
+      }
+      a {
+        color: var(--gold);
+      }
+      .back {
+        font-family: "Oswald";
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        text-decoration: none;
+        color: var(--muted);
+      }
+      .back:hover {
+        color: #fff;
+      }
+      .eyebrow {
+        font-family: "Oswald";
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--red);
+        margin: 26px 0 10px;
+      }
+      h1 {
+        font-family: "Anton";
+        font-size: clamp(34px, 6vw, 52px);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        line-height: 1;
+      }
+      .lead {
+        color: var(--muted);
+        font-size: 17px;
+        max-width: 620px;
+        margin-top: 14px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 24px;
+        margin-top: 40px;
+        align-items: start;
+      }
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .panel {
+        background: linear-gradient(165deg, #13151b, #0c0d11);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 28px;
+      }
+      .panel h2 {
+        font-family: "Oswald";
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 15px;
+        color: var(--muted);
+        margin-bottom: 22px;
+      }
+      .ctrl {
+        margin-bottom: 26px;
+      }
+      .ctrl .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 10px;
+      }
+      .ctrl label {
+        font-family: "Oswald";
+        font-weight: 600;
+        font-size: 15px;
+        letter-spacing: 0.3px;
+      }
+      .ctrl .val {
+        font-family: "Anton";
+        font-size: 24px;
+        color: var(--gold);
+      }
+      .ctrl .hint {
+        color: #7a7e88;
+        font-size: 12px;
+        margin-top: 7px;
+      }
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 6px;
+        background: #262a34;
+        outline: none;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--red);
+        cursor: pointer;
+        box-shadow: 0 0 0 4px rgba(255, 46, 46, 0.18);
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border: 0;
+        border-radius: 50%;
+        background: var(--red);
+        cursor: pointer;
+      }
+      .scale {
+        display: flex;
+        justify-content: space-between;
+        color: #5f636d;
+        font-size: 11px;
+        margin-top: 6px;
+        font-family: "Oswald";
+      }
+
+      .verdict {
+        border-radius: 18px;
+        padding: 28px;
+        border: 1px solid;
+        transition:
+          background 0.25s,
+          border-color 0.25s;
+      }
+      .verdict .tag {
+        font-family: "Oswald";
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-size: 12px;
+        margin-bottom: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .verdict .tag .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .verdict h3 {
+        font-family: "Anton";
+        font-size: 30px;
+        text-transform: uppercase;
+        line-height: 1.04;
+        margin-bottom: 12px;
+      }
+      .verdict p {
+        font-size: 15px;
+        color: #d6d9e0;
+      }
+      .verdict .next {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        font-size: 14px;
+        color: #cfd3db;
+      }
+      .verdict .next b {
+        color: #fff;
+        font-family: "Oswald";
+        letter-spacing: 0.3px;
+      }
+      .v-red {
+        background: linear-gradient(
+          165deg,
+          rgba(255, 46, 46, 0.14),
+          rgba(12, 13, 17, 0.9)
+        );
+        border-color: rgba(255, 46, 46, 0.5);
+      }
+      .v-amber {
+        background: linear-gradient(
+          165deg,
+          rgba(245, 166, 35, 0.13),
+          rgba(12, 13, 17, 0.9)
+        );
+        border-color: rgba(245, 166, 35, 0.5);
+      }
+      .v-green {
+        background: linear-gradient(
+          165deg,
+          rgba(55, 214, 122, 0.13),
+          rgba(12, 13, 17, 0.9)
+        );
+        border-color: rgba(55, 214, 122, 0.5);
+      }
+      .v-red .dot {
+        background: var(--red);
+      }
+      .v-amber .dot {
+        background: var(--amber);
+      }
+      .v-green .dot {
+        background: var(--green);
+      }
+      .v-red .tag {
+        color: #ff8585;
+      }
+      .v-amber .tag {
+        color: var(--amber);
+      }
+      .v-green .tag {
+        color: var(--green);
+      }
+
+      .bias {
+        margin-top: 18px;
+        background: rgba(245, 166, 35, 0.08);
+        border: 1px solid rgba(245, 166, 35, 0.3);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: 13px;
+        color: #e9d3a3;
+        display: none;
+      }
+      .bias.show {
+        display: block;
+      }
+      .thresholds {
+        margin-top: 34px;
+        color: #7a7e88;
+        font-size: 13px;
+        line-height: 1.7;
+      }
+      .thresholds b {
+        color: #c2c6d0;
+        font-family: "Oswald";
+        letter-spacing: 0.3px;
+      }
+      .foot {
+        margin-top: 40px;
+        color: #5f636d;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <a class="back" href="index.html">← к странице</a>
+      <div class="eyebrow">Инструмент ревью · фейкдор Shadow Fight</div>
+      <h1>Симулятор решения</h1>
+      <p class="lead">
+        Подвигай ползунки — увидишь, какой вердикт даёт фейкдор по дереву
+        решений.
+      </p>
+
+      <div class="grid">
+        <div class="panel">
+          <h2>Результаты эксперимента</h2>
+
+          <div class="ctrl">
+            <div class="row">
+              <label>Холодный CTR по кнопке</label
+              ><span class="val" id="vCtr">8%</span>
+            </div>
+            <input
+              type="range"
+              id="ctr"
+              min="0"
+              max="25"
+              step="0.5"
+              value="8"
+            />
+            <div class="scale"><span>0%</span><span>25%</span></div>
+            <div class="hint">
+              Доля посетителей холодного сегмента, нажавших CTA. Порог: win ≥
+              10%, loss &lt; 5%.
+            </div>
+          </div>
+
+          <div class="ctrl">
+            <div class="row">
+              <label>Opt-in (оставили почту)</label
+              ><span class="val" id="vOpt">30%</span>
+            </div>
+            <input type="range" id="opt" min="0" max="80" step="1" value="30" />
+            <div class="scale"><span>0%</span><span>80%</span></div>
+            <div class="hint">
+              Доля кликнувших, кто реально оставил контакт. Порог: win ≥ 40%,
+              loss &lt; 20%.
+            </div>
+          </div>
+
+          <div class="ctrl" style="margin-bottom: 0">
+            <div class="row">
+              <label>Доля фанатов в трафике</label
+              ><span class="val" id="vFan">40%</span>
+            </div>
+            <input
+              type="range"
+              id="fan"
+              min="0"
+              max="100"
+              step="5"
+              value="40"
+            />
+            <div class="scale"><span>0%</span><span>100%</span></div>
+            <div class="hint">
+              Долю не угадываем — задаём разметкой: трафик заранее делим на
+              каналы (фанаты серии / холодный на платформе), каждый со своей
+              UTM. Решение читаем по холодному сегменту, не по смешанному CTR.
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="verdict v-amber" id="verdict">
+            <span class="tag"
+              ><span class="dot"></span><span id="vTag">Вердикт</span></span
+            >
+            <h3 id="vTitle">—</h3>
+            <p id="vText">—</p>
+            <div class="next">
+              <b>Следующий шаг:</b> <span id="vNext">—</span>
+            </div>
+          </div>
+          <div class="bias" id="bias"></div>
+        </div>
+      </div>
+
+      <div class="thresholds">
+        <b>Как считается.</b> Сначала смотрим CTR холодного сегмента, затем
+        opt-in. CTR &lt; 5% — спроса нет; 5–10% — серая зона; ≥ 10% — сильный
+        интерес. При сильном CTR решает opt-in: &lt; 20% — любопытство, ≥ 40% —
+        готовность. Зелёный свет ≠ «строить игру», а «тратиться на следующий
+        тест — софт-запуск с метриками удержания (D1/D7)».
+      </div>
+      <div class="thresholds">
+        <b>Откуда берётся сегмент.</b> UTM не «определяет фаната» — это метка
+        канала, который настроен на фанатов таргетингом. Фанатский канал —
+        реклама с таргетом на аудиторию серии (интересы «файтинги / Shadow
+        Fight», look-alike по игрокам мобильной версии, ретаргет, сообщества
+        Nekki), ссылки метятся, например, <b>utm_source=fans</b>. Холодный —
+        широкий нативный трафик платформы без фан-таргета,
+        <b>utm_source=cold</b>. Кто пришёл по фан-ссылке — в фан-сегменте;
+        CTR/opt-in считаем по каждому источнику отдельно.
+      </div>
+    </div>
+
+    <script>
+      const ctr = document.getElementById("ctr"),
+        opt = document.getElementById("opt"),
+        fan = document.getElementById("fan");
+      const vCtr = document.getElementById("vCtr"),
+        vOpt = document.getElementById("vOpt"),
+        vFan = document.getElementById("vFan");
+      const box = document.getElementById("verdict"),
+        vTag = document.getElementById("vTag"),
+        vTitle = document.getElementById("vTitle"),
+        vText = document.getElementById("vText"),
+        vNext = document.getElementById("vNext");
+      const bias = document.getElementById("bias");
+
+      function decide(c, o) {
+        if (c < 5)
+          return [
+            "red",
+            "Стоп",
+            "Тяги нет",
+            "Холодный CTR ниже порога жизнеспособного спроса. Аудитория платформы не реагирует на анонс.",
+            "Не инвестируем в портирование. Либо пересматриваем позиционирование.",
+          ];
+        if (c < 10)
+          return [
+            "amber",
+            "Серая зона",
+            "Слабый сигнал",
+            "CTR между 5% и 10% — интерес есть, но неуверенный.",
+            "Добрать трафик и протестировать другой оффер/креатив, прежде чем решать.",
+          ];
+        if (o < 20)
+          return [
+            "amber",
+            "Стоп-проверка",
+            "Любопытство, не готовность",
+            "Кликают охотно, но почти не оставляют контакт — это интерес к картинке, не к игре.",
+            "Добрать качественным замером («почему кликнул / сколько готов ждать»).",
+          ];
+        if (o < 40)
+          return [
+            "amber",
+            "Пограничный",
+            "Почти готовность",
+            "CTR сильный, opt-in близок к порогу, но не дотянул.",
+            "Скорее добрать ещё трафика для значимости, чем сразу запускать.",
+          ];
+        return [
+          "green",
+          "Зелёный свет",
+          "Тяга подтверждена",
+          "И широкий интерес (CTR), и готовность (opt-in) выше порогов на холодном сегменте.",
+          "Запускаем игру на небольшой группе и смотрим, возвращаются ли люди на второй и седьмой день. Интерес мы уже увидели — а будут ли играть, покажет только сам запуск.",
+        ];
+      }
+      function render() {
+        const c = +ctr.value,
+          o = +opt.value,
+          f = +fan.value;
+        vCtr.textContent = c + "%";
+        vOpt.textContent = o + "%";
+        vFan.textContent = f + "%";
+        const [cls, tag, title, text, next] = decide(c, o);
+        box.className = "verdict v-" + cls;
+        vTag.textContent = tag;
+        vTitle.textContent = title;
+        vText.textContent = text;
+        vNext.textContent = next;
+        if (f >= 60) {
+          bias.classList.add("show");
+          bias.innerHTML =
+            "⚠️ " +
+            f +
+            "% трафика — фанаты серии. Смешанный CTR завышен: фанаты «забивают» сигнал холодной аудитории. Решение принимаем строго по холодному сегменту.";
+        } else bias.classList.remove("show");
+      }
+      [ctr, opt, fan].forEach((el) => el.addEventListener("input", render));
+      render();
+    </script>
+  </body>
+</html>

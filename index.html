@@ -23,6 +23,16 @@
     <meta property="og:image" content="hero.jpg" />
     <meta property="og:image:alt" content="Shadow Fight — бой" />
     <meta name="twitter:card" content="summary_large_image" />
+    <!-- Яндекс.Метрика (демо-счётчик 99999999 — заменить на реальный) -->
+    <script type="text/javascript">
+      (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < e.scripts.length; j++) { if (e.scripts[j].src === r) return; }
+        k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a);
+      })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+      ym(99999999, "init", { clickmap: true, trackLinks: true, accurateTrackBounce: true });
+    </script>
     <link rel="preload" as="image" href="hero.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1455,6 +1465,19 @@
         line-height: 1.5;
         margin-bottom: 6px;
       }
+      .explain-intro .ei-sim {
+        display: inline-block;
+        margin-top: 14px;
+        font-family: "Oswald", sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--red2);
+        text-decoration: none;
+      }
+      .explain-intro .ei-sim:hover {
+        color: var(--red);
+        text-decoration: underline;
+      }
       .explain-intro .ei-metrics li b {
         color: var(--red2);
       }
@@ -2067,6 +2090,7 @@
         Цифры режу по источнику (UTM), чтобы не мешать фанатов с холодной
         аудиторией. Опирался на ресёрч ниши, бенчмарки фейкдоров и тон оф войс.
       </p>
+      <a class="ei-sim" href="simulator.html">▶ Симулятор решения — подвигай цифры, увидишь вердикт →</a>
     </div>
     <button class="explain-toggle" id="explainToggle">Разбор страницы</button>
 
@@ -2128,6 +2152,8 @@
         camp: Q.get("utm_campaign") || "",
       };
       state.utm = UTM;
+      /* Я.Метрика: демо-счётчик — заменить на реальный номер при запуске */
+      const YM_ID = 99999999;
       function persist() {
         localStorage.setItem(KEY, JSON.stringify(state));
       }
@@ -2139,6 +2165,8 @@
           ...(extra || {}),
         });
         console.log("[fakedoor]", name, { src: UTM.src, ...extra });
+        // цель в Я.Метрике (нативный замер, не только localStorage)
+        try { window.ym && ym(YM_ID, "reachGoal", name, { src: UTM.src }); } catch (e) {}
         persist();
       }
 
